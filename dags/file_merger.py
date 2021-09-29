@@ -1,6 +1,6 @@
 
 import sys
-sys.path.insert(0,"/users/oliver.bradley/airflow/scripts")
+import os
 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
@@ -22,9 +22,15 @@ default_args = {
     'retry_delay': timedelta(minutes=1)
 }
 
-input_source_1 = "/users/oliver.bradley/airflow/input_source_1/"
-input_source_2 = "/users/oliver.bradley/airflow/input_source_2/"
-input_source_archive = '/users/oliver.bradley/airflow/input_source_archive/'
+# Declare some paths
+this_dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir = os.path.abspath(r'%s' %(this_dir_path + "/../"))
+
+input_source_1 = parent_dir + "/input_source_1/"
+input_source_2 =  parent_dir + "/input_source_2/"
+
+sys.path.insert(0, parent_dir + "/scripts")
+input_source_archive = parent_dir + "/input_source_archive/"
 
 def failure_callback(context):
     if isinstance(context['exception'], AirflowSensorTimeout):
@@ -47,7 +53,7 @@ with DAG('file_merger',
         poke_interval=30,
         timeout=60 * 60,
         mode='reschedule',
-        filepath=f'''{input_source_1}*.json''',
+        filepath=f'''{input_source_1}/*.json''',
         on_failure_callback = failure_callback
     )
 
@@ -56,7 +62,7 @@ with DAG('file_merger',
         poke_interval=30,
         timeout=60 * 60,
         mode='reschedule',
-        filepath=f'''{input_source_2}*.csv''',
+        filepath=f'''{input_source_2}/*.csv''',
         on_failure_callback = failure_callback
     )
 

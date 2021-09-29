@@ -4,17 +4,20 @@ from pyspark.sql.functions import col, coalesce, input_file_name, lit, regexp_ex
 from pyspark.sql.types import LongType
 import file_deleter as fd
 
-# Set uo our sparkj session
+# Set up our spark session
 spark = SparkSession.builder \
                     .master("local") \
                     .config("mapreduce.fileoutputcommitter.marksuccessfuljobs", "false") \
                     .getOrCreate()
 
-
 # Declare some paths
-input_dir_json = '/Users/oliver.bradley/airflow/input_source_1/'
-input_dir_csv =  '/Users/oliver.bradley/airflow/input_source_2/'
-output_dir = "/Users/oliver.bradley/airflow/output_dest/"
+
+this_dir_path = os.path.dirname(os.path.realpath(__file__))
+root_dir = os.path.abspath(r'%s' %(this_dir_path + "/../../"))
+
+input_dir_json = root_dir + "/input_source_1/"
+input_dir_csv =  root_dir + "/input_source_2/"
+output_dir = root_dir + "/output_dest/"
 
 # Get all json files in our source folder and extract the date from each file name
 df_json = spark.read.json(f'''{input_dir_json}*.json''') \
