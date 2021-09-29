@@ -1,1 +1,1 @@
-This folder exists as a placeholder and is used as a destination for the cleansed csv files.
+This folder exists as a placeholder and will be populated with the transformed csv files once they have been loaded and transformed
